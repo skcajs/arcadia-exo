@@ -6,6 +6,7 @@ import {
   ListItemButton,
   ListItemText,
 } from "@mui/material";
+import React from "react";
 
 export default function Solutions() {
   return (
@@ -16,14 +17,14 @@ export default function Solutions() {
         </ListItem>
         <Divider />
         {["Solution 1", "Solution 2"].map((text) => (
-          <>
-            <ListItem key={text} disablePadding>
+          <React.Fragment key={text}>
+            <ListItem disablePadding>
               <ListItemButton>
                 <ListItemText primary={text} />
               </ListItemButton>
             </ListItem>
             <Divider />
-          </>
+          </React.Fragment>
         ))}
       </List>
     </Box>

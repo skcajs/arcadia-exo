@@ -6,6 +6,7 @@ import {
   ListItemButton,
   ListItemText,
 } from "@mui/material";
+import React from "react";
 
 export default function Tools() {
   return (
@@ -16,14 +17,14 @@ export default function Tools() {
         </ListItem>
         <Divider />
         {["Intersect", "Union"].map((text) => (
-          <>
-            <ListItem key={text} disablePadding>
+          <React.Fragment key={text}>
+            <ListItem disablePadding>
               <ListItemButton>
                 <ListItemText primary={text} />
               </ListItemButton>
             </ListItem>
             <Divider />
-          </>
+          </React.Fragment>
         ))}
       </List>
     </Box>
