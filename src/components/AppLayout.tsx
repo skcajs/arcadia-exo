@@ -1,11 +1,9 @@
-import { AppBar, Drawer, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, Drawer, Toolbar, Typography } from "@mui/material";
 import "./AppLayout.css";
 import Solutions from "./Solutions";
 import Statistics from "./Statistics";
 import Tools from "./Tools";
 import Map from "./Map";
-
-// const drawerWidth = 320;
 
 export default function AppLayout() {
   return (
@@ -22,11 +20,13 @@ export default function AppLayout() {
         </Toolbar>
       </AppBar>
 
-      <div>
+      <Box>
         {/* map */}
+
         <Map />
 
         {/* left side bar */}
+
         <Drawer variant="permanent" anchor="left">
           <Toolbar />
           <Solutions />
@@ -39,7 +39,7 @@ export default function AppLayout() {
           <br />
           <Tools />
         </Drawer>
-      </div>
+      </Box>
     </>
   );
 }

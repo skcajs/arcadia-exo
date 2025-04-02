@@ -10,7 +10,7 @@ import React from "react";
 
 export default function Tools() {
   return (
-    <Box sx={{ width: 250 }} role="presentation">
+    <Box sx={{ width: 250 }} role="menu">
       <List>
         <ListItem className="title">
           <Box>Tools</Box>
