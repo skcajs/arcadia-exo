@@ -58,101 +58,103 @@ const useMapStore = create<MapStore>()((set, get) => ({
         });
       }
 
-      console.log(solutionMap.selectedFeatures);
-
       return !isSelected;
     },
     intersect: () => {
       const { solutionMap } = get();
-      const coord1 =
-        solutionMap.selectedFeatures[0].geometry.type === "Polygon"
-          ? solutionMap.selectedFeatures[0].geometry.coordinates
-          : null;
+      if (solutionMap.selectedFeatures.length === 2) {
+        const coord1 =
+          solutionMap.selectedFeatures[0].geometry.type === "Polygon"
+            ? solutionMap.selectedFeatures[0].geometry.coordinates
+            : null;
 
-      const coord2 =
-        solutionMap.selectedFeatures[1].geometry.type === "Polygon"
-          ? solutionMap.selectedFeatures[1].geometry.coordinates
-          : null;
+        const coord2 =
+          solutionMap.selectedFeatures[1].geometry.type === "Polygon"
+            ? solutionMap.selectedFeatures[1].geometry.coordinates
+            : null;
 
-      let poly1: Feature<Polygon, GeoJsonProperties> | null = coord1
-        ? turf.polygon(coord1)
-        : null;
-      let poly2: Feature<Polygon, GeoJsonProperties> | null = coord2
-        ? turf.polygon(coord2)
-        : null;
-      if (coord1 && coord2) {
-        poly1 = turf.polygon(coord1);
-        poly2 = turf.polygon(coord2);
+        let poly1: Feature<Polygon, GeoJsonProperties> | null = coord1
+          ? turf.polygon(coord1)
+          : null;
+        let poly2: Feature<Polygon, GeoJsonProperties> | null = coord2
+          ? turf.polygon(coord2)
+          : null;
+        if (coord1 && coord2) {
+          poly1 = turf.polygon(coord1);
+          poly2 = turf.polygon(coord2);
+        }
+
+        const intersection =
+          poly1 && poly2
+            ? turf.intersect(turf.featureCollection([poly1, poly2]))
+            : null;
+
+        if (intersection) {
+          set({
+            solutionMap: {
+              ...solutionMap,
+              selectedFeatures: [],
+              collection: turf.featureCollection(
+                intersection ? [intersection] : []
+              ),
+            },
+          });
+        }
+
+        //   const features: FeatureCollection<
+        //     Polygon | MultiPolygon,
+        //     GeoJsonProperties
+        //   > = solutionMap.collection;
+        //   const featureMap = turf.intersect(features);
+        //   if (featureMap) {
+        //     set({
+        //       solutionMap: {
+        //         ...solutionMap,
+        //         selectedFeatures: [],
+        //         collection: turf.featureCollection(featureMap ? [featureMap] : []),
+        //       },
+        //     });
+        //   }
       }
-
-      const intersection =
-        poly1 && poly2
-          ? turf.intersect(turf.featureCollection([poly1, poly2]))
-          : null;
-
-      if (intersection) {
-        set({
-          solutionMap: {
-            ...solutionMap,
-            selectedFeatures: [],
-            collection: turf.featureCollection(
-              intersection ? [intersection] : []
-            ),
-          },
-        });
-      }
-
-      //   const features: FeatureCollection<
-      //     Polygon | MultiPolygon,
-      //     GeoJsonProperties
-      //   > = solutionMap.collection;
-      //   const featureMap = turf.intersect(features);
-      //   if (featureMap) {
-      //     set({
-      //       solutionMap: {
-      //         ...solutionMap,
-      //         selectedFeatures: [],
-      //         collection: turf.featureCollection(featureMap ? [featureMap] : []),
-      //       },
-      //     });
-      //   }
     },
     union: () => {
       const { solutionMap } = get();
-      const coord1 =
-        solutionMap.selectedFeatures[0].geometry.type === "Polygon"
-          ? solutionMap.selectedFeatures[0].geometry.coordinates
+      if (solutionMap.selectedFeatures.length === 2) {
+        const coord1 =
+          solutionMap.selectedFeatures[0].geometry.type === "Polygon"
+            ? solutionMap.selectedFeatures[0].geometry.coordinates
+            : null;
+
+        const coord2 =
+          solutionMap.selectedFeatures[1].geometry.type === "Polygon"
+            ? solutionMap.selectedFeatures[1].geometry.coordinates
+            : null;
+
+        let poly1: Feature<Polygon, GeoJsonProperties> | null = coord1
+          ? turf.polygon(coord1)
           : null;
-
-      const coord2 =
-        solutionMap.selectedFeatures[1].geometry.type === "Polygon"
-          ? solutionMap.selectedFeatures[1].geometry.coordinates
+        let poly2: Feature<Polygon, GeoJsonProperties> | null = coord2
+          ? turf.polygon(coord2)
           : null;
+        if (coord1 && coord2) {
+          poly1 = turf.polygon(coord1);
+          poly2 = turf.polygon(coord2);
+        }
 
-      let poly1: Feature<Polygon, GeoJsonProperties> | null = coord1
-        ? turf.polygon(coord1)
-        : null;
-      let poly2: Feature<Polygon, GeoJsonProperties> | null = coord2
-        ? turf.polygon(coord2)
-        : null;
-      if (coord1 && coord2) {
-        poly1 = turf.polygon(coord1);
-        poly2 = turf.polygon(coord2);
-      }
+        const union =
+          poly1 && poly2
+            ? turf.union(turf.featureCollection([poly1, poly2]))
+            : null;
 
-      const union =
-        poly1 && poly2
-          ? turf.union(turf.featureCollection([poly1, poly2]))
-          : null;
-
-      if (union) {
-        set({
-          solutionMap: {
-            ...solutionMap,
-            selectedFeatures: [],
-            collection: turf.featureCollection(union ? [union] : []),
-          },
-        });
+        if (union) {
+          set({
+            solutionMap: {
+              ...solutionMap,
+              selectedFeatures: [],
+              collection: turf.featureCollection(union ? [union] : []),
+            },
+          });
+        }
       }
     },
   },
