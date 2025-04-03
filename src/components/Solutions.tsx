@@ -10,9 +10,12 @@ import {
 } from "@mui/material";
 
 import { Solution } from "../types/Solution";
+import { useMapActions } from "../stores/mapStore";
 
 export default function Solutions() {
   const [data, setData] = useState([]);
+
+  const { setSolutionMap } = useMapActions();
 
   useEffect(() => {
     const fetchSoltuions = async () => {
@@ -28,9 +31,18 @@ export default function Solutions() {
     fetchSoltuions();
   }, []);
 
-  const handleGeojson = (fileName: string) => {
-    console.log(fileName);
+  const handleGeojson = async (solution: Solution) => {
+    const res = await fetch(`/data/geojson/${solution.fileName}`);
+    if (!res.ok) return;
+
+    const featureMap = await res.json();
+
+    setSolutionMap({
+      solutionName: solution.solutionName,
+      collection: featureMap,
+    });
   };
+
   return (
     <Box sx={{ width: 250 }} role="menu">
       <List>
@@ -41,7 +53,7 @@ export default function Solutions() {
         {data.map((item: Solution) => (
           <React.Fragment key={item.solutionName}>
             <ListItem disablePadding>
-              <ListItemButton onClick={() => handleGeojson(item.fileName)}>
+              <ListItemButton onClick={() => handleGeojson(item)}>
                 <ListItemText primary={item.solutionName} />
               </ListItemButton>
             </ListItem>
