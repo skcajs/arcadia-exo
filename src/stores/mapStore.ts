@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { SolutionMap } from "../types/SolutionMap";
 import { Feature } from "geojson";
+import * as turf from "@turf/turf";
 
 const defaultMap: SolutionMap = {
   name: "default",
@@ -23,6 +24,7 @@ const defaultMap: SolutionMap = {
 interface MapActions {
   setSolutionMap: (solutionMap: SolutionMap) => void;
   updateSelectedFeatures: (selectedFeature: Feature) => boolean;
+  getArea: () => number;
 }
 
 interface MapStore {
@@ -30,7 +32,7 @@ interface MapStore {
   actions: MapActions;
 }
 
-const useMapStore = create<MapStore>()((set, get) => ({
+export const useMapStore = create<MapStore>()((set, get) => ({
   solutionMap: defaultMap,
   actions: {
     setSolutionMap: (solutionMap: SolutionMap) => set({ solutionMap }),
@@ -58,6 +60,16 @@ const useMapStore = create<MapStore>()((set, get) => ({
       console.log(solutionMap.selectedFeatures);
 
       return !isSelected;
+    },
+    getArea: (): number => {
+      const { solutionMap } = get();
+      let area = 0;
+
+      solutionMap.selectedFeatures.forEach((feature) => {
+        area += turf.area(feature);
+      });
+
+      return area;
     },
   },
 }));

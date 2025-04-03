@@ -1,6 +1,9 @@
 import { Box, List, ListItem, Divider, ListItemText } from "@mui/material";
+import { useMapStore } from "../stores/mapStore";
 
 export default function Statistics() {
+  const area = useMapStore((state) => state.actions.getArea());
+
   return (
     <Box sx={{ width: 250 }} role="presentation">
       <List>
@@ -10,7 +13,7 @@ export default function Statistics() {
         <Divider />
 
         <ListItem>
-          <ListItemText primary={"Area: xxx"} />
+          <ListItemText primary={`Area: ${area.toFixed(2)} m²`} />
         </ListItem>
         <Divider />
       </List>

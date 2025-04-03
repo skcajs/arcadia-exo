@@ -22,11 +22,9 @@ export default function AppLayout() {
 
       <Box>
         {/* map */}
-
         <Map />
 
         {/* left side bar */}
-
         <Drawer variant="permanent" anchor="left">
           <Toolbar />
           <Solutions />
