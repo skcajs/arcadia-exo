@@ -1,6 +1,7 @@
-import { FeatureCollection } from "geojson";
+import { FeatureCollection, Feature } from "geojson";
 
 export type SolutionMap = {
-  solutionName: string;
+  name: string;
+  selectedFeatures: Feature[];
   collection: FeatureCollection;
 };

@@ -1,7 +1,7 @@
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { useSolutionMap } from "../stores/mapStore";
+import { useMapActions, useSolutionMap } from "../stores/mapStore";
 import { useEffect, useRef } from "react";
 import { FeatureCollection } from "geojson";
 
@@ -22,6 +22,7 @@ export default function Map() {
 }
 
 const MapFeatures = ({ geoJson }: { geoJson: FeatureCollection }) => {
+  const { addSelectedFeature } = useMapActions();
   const map = useMap();
   const geoJsonLayerRef = useRef<L.Layer | null>(null);
 
@@ -32,13 +33,27 @@ const MapFeatures = ({ geoJson }: { geoJson: FeatureCollection }) => {
       map.removeLayer(geoJsonLayerRef.current);
     }
 
-    const layer = L.geoJSON(geoJson);
+    const layer = L.geoJSON(geoJson, {
+      onEachFeature: (feature, layer) => {
+        layer.on("click", () => {
+          const isAdded = addSelectedFeature(feature);
+
+          if (layer instanceof L.Path) {
+            layer.setStyle({
+              color: isAdded ? "green" : "#3388ff",
+            });
+          }
+          console.log(feature);
+        });
+      },
+    });
+
     geoJsonLayerRef.current = layer;
     const bounds = layer.getBounds();
 
     map.addLayer(layer);
     map.setView(bounds.getCenter(), 15);
-  }, [geoJson, map]);
+  }, [addSelectedFeature, geoJson, map]);
 
   return null;
 };

@@ -1,8 +1,10 @@
 import { create } from "zustand";
 import { SolutionMap } from "../types/SolutionMap";
+import { Feature } from "geojson";
 
 const defaultMap: SolutionMap = {
-  solutionName: "default",
+  name: "default",
+  selectedFeatures: [],
   collection: {
     type: "FeatureCollection",
     features: [
@@ -11,7 +13,7 @@ const defaultMap: SolutionMap = {
         properties: {},
         geometry: {
           type: "Polygon",
-          coordinates: [[[2.2919046878814697, 48.85770582708133]]],
+          coordinates: [[[0.1276, 51.5072]]],
         },
       },
     ],
@@ -19,7 +21,8 @@ const defaultMap: SolutionMap = {
 };
 
 interface MapActions {
-  setSolutionMap: (geoMap: SolutionMap) => void;
+  setSolutionMap: (solutionMap: SolutionMap) => void;
+  addSelectedFeature: (selectedFeature: Feature) => boolean;
 }
 
 interface MapStore {
@@ -27,10 +30,29 @@ interface MapStore {
   actions: MapActions;
 }
 
-const useMapStore = create<MapStore>()((set) => ({
+const useMapStore = create<MapStore>()((set, get) => ({
   solutionMap: defaultMap,
   actions: {
     setSolutionMap: (solutionMap: SolutionMap) => set({ solutionMap }),
+    addSelectedFeature: (selectedFeature: Feature): boolean => {
+      const { solutionMap } = get();
+      const isSelected = solutionMap.selectedFeatures.some(
+        (feature) => feature === selectedFeature
+      );
+
+      set({
+        solutionMap: {
+          ...solutionMap,
+          selectedFeatures: isSelected
+            ? solutionMap.selectedFeatures.filter(
+                (feature) => feature !== selectedFeature
+              )
+            : [...solutionMap.selectedFeatures, selectedFeature],
+        },
+      });
+
+      return !isSelected;
+    },
   },
 }));
 

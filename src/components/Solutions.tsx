@@ -14,11 +14,12 @@ import { useMapActions } from "../stores/mapStore";
 
 export default function Solutions() {
   const [data, setData] = useState([]);
+  const [selectedSolution, setSelectedSolution] = useState<string | null>(null);
 
   const { setSolutionMap } = useMapActions();
 
   useEffect(() => {
-    const fetchSoltuions = async () => {
+    const fetchSolutions = async () => {
       const res = await fetch("/data/stubbs/solutions.json");
 
       if (!res.ok) return;
@@ -28,7 +29,7 @@ export default function Solutions() {
       setData(files);
     };
 
-    fetchSoltuions();
+    fetchSolutions();
   }, []);
 
   const handleGeojson = async (solution: Solution) => {
@@ -38,9 +39,12 @@ export default function Solutions() {
     const featureMap = await res.json();
 
     setSolutionMap({
-      solutionName: solution.solutionName,
+      name: solution.solutionName,
+      selectedFeatures: [],
       collection: featureMap,
     });
+
+    setSelectedSolution(solution.solutionName);
   };
 
   return (
@@ -53,7 +57,10 @@ export default function Solutions() {
         {data.map((item: Solution) => (
           <React.Fragment key={item.solutionName}>
             <ListItem disablePadding>
-              <ListItemButton onClick={() => handleGeojson(item)}>
+              <ListItemButton
+                onClick={() => handleGeojson(item)}
+                selected={selectedSolution === item.solutionName}
+              >
                 <ListItemText primary={item.solutionName} />
               </ListItemButton>
             </ListItem>
