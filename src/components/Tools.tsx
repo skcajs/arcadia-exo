@@ -7,8 +7,17 @@ import {
   ListItemText,
 } from "@mui/material";
 import React from "react";
+import { useMapActions } from "../stores/mapStore";
 
 export default function Tools() {
+  const { intersect } = useMapActions();
+  const { union } = useMapActions();
+
+  const tools = [
+    { name: "Intersect", onClick: intersect },
+    { name: "Union", onClick: union },
+  ];
+
   return (
     <Box sx={{ width: 250 }} role="menu">
       <List>
@@ -16,11 +25,11 @@ export default function Tools() {
           <Box>Tools</Box>
         </ListItem>
         <Divider />
-        {["Intersect", "Union"].map((text) => (
-          <React.Fragment key={text}>
+        {tools.map((tool) => (
+          <React.Fragment key={tool.name}>
             <ListItem disablePadding>
-              <ListItemButton>
-                <ListItemText primary={text} />
+              <ListItemButton onClick={() => tool.onClick?.()}>
+                <ListItemText primary={tool.name} />
               </ListItemButton>
             </ListItem>
             <Divider />

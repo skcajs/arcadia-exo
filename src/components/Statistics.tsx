@@ -1,8 +1,8 @@
 import { Box, List, ListItem, Divider, ListItemText } from "@mui/material";
-import { useMapStore } from "../stores/mapStore";
+import { useArea } from "../stores/mapStore";
 
 export default function Statistics() {
-  const area = useMapStore((state) => state.actions.getArea());
+  const area = useArea();
 
   return (
     <Box sx={{ width: 250 }} role="presentation">
