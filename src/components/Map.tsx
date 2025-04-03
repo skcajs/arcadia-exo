@@ -22,7 +22,7 @@ export default function Map() {
 }
 
 const MapFeatures = ({ geoJson }: { geoJson: FeatureCollection }) => {
-  const { addSelectedFeature } = useMapActions();
+  const { updateSelectedFeatures } = useMapActions();
   const map = useMap();
   const geoJsonLayerRef = useRef<L.Layer | null>(null);
 
@@ -36,14 +36,13 @@ const MapFeatures = ({ geoJson }: { geoJson: FeatureCollection }) => {
     const layer = L.geoJSON(geoJson, {
       onEachFeature: (feature, layer) => {
         layer.on("click", () => {
-          const isAdded = addSelectedFeature(feature);
+          const isAdded = updateSelectedFeatures(feature);
 
           if (layer instanceof L.Path) {
             layer.setStyle({
               color: isAdded ? "green" : "#3388ff",
             });
           }
-          console.log(feature);
         });
       },
     });
@@ -53,7 +52,7 @@ const MapFeatures = ({ geoJson }: { geoJson: FeatureCollection }) => {
 
     map.addLayer(layer);
     map.setView(bounds.getCenter(), 15);
-  }, [addSelectedFeature, geoJson, map]);
+  }, [updateSelectedFeatures, geoJson, map]);
 
   return null;
 };

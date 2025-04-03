@@ -22,7 +22,7 @@ const defaultMap: SolutionMap = {
 
 interface MapActions {
   setSolutionMap: (solutionMap: SolutionMap) => void;
-  addSelectedFeature: (selectedFeature: Feature) => boolean;
+  updateSelectedFeatures: (selectedFeature: Feature) => boolean;
 }
 
 interface MapStore {
@@ -34,22 +34,28 @@ const useMapStore = create<MapStore>()((set, get) => ({
   solutionMap: defaultMap,
   actions: {
     setSolutionMap: (solutionMap: SolutionMap) => set({ solutionMap }),
-    addSelectedFeature: (selectedFeature: Feature): boolean => {
+    updateSelectedFeatures: (selectedFeature: Feature): boolean => {
       const { solutionMap } = get();
-      const isSelected = solutionMap.selectedFeatures.some(
+      let isSelected = solutionMap.selectedFeatures.some(
         (feature) => feature === selectedFeature
       );
 
-      set({
-        solutionMap: {
-          ...solutionMap,
-          selectedFeatures: isSelected
-            ? solutionMap.selectedFeatures.filter(
-                (feature) => feature !== selectedFeature
-              )
-            : [...solutionMap.selectedFeatures, selectedFeature],
-        },
-      });
+      if (!isSelected && solutionMap.selectedFeatures.length >= 2) {
+        isSelected = !isSelected;
+      } else {
+        set({
+          solutionMap: {
+            ...solutionMap,
+            selectedFeatures: isSelected
+              ? solutionMap.selectedFeatures.filter(
+                  (feature) => feature !== selectedFeature
+                )
+              : [...solutionMap.selectedFeatures, selectedFeature],
+          },
+        });
+      }
+
+      console.log(solutionMap.selectedFeatures);
 
       return !isSelected;
     },
