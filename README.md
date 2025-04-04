@@ -48,7 +48,7 @@ There are multiple assumptions made:
 
 7. Data is stored locally in the public folder, under `stubbs`.
 
-8. The application is designed for a monitor and many not work on a phone or tablet.
+8. The application is designed for a monitor and may not work on a phone or tablet.
 
 ## Things for the future
 
