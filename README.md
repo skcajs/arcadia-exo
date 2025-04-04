@@ -40,7 +40,7 @@ There are multiple assumptions made:
 
 3. The zoom controls are disabled. This is to stop the user accidentally zooming in whilst trying to select or deselect a polygon. Otherwise, the basic features of the mapbox are available.
 
-4. The app assumes that all input GeoJSON files are valid `FeatureCollection` objects containing polygon geometries. No validation is performed at runtime.
+4. The app assumes that all input GeoJSON files are valid `FeatureCollection` objects containing polygon geometries. No validation is performed, outside of a few instances whithin the mapStore (e.g, turf expects a feature of a certain type).
 
 5. All changes are stored in memory for the current session. Data is not persisted to disk, browser storage, or a backend. Reloading the page will reset all changes.
 
