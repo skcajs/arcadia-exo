@@ -2,7 +2,7 @@
 
 The task was to make a simple web application where the user can interact with a set of polygons on a map.
 
-![alt text](<Screenshot from 2025-04-04 12-05-19.png>)
+![alt text](output.png)
 
 The application supports several features, including:
 
