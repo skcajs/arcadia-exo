@@ -6,3 +6,8 @@
   font-weight: bold;
   height: 48px;
 }
+
+.stat {
+  font-style: "italic";
+  color: "grey.700";
+}

@@ -13,7 +13,9 @@ export default function Statistics() {
         <Divider />
 
         <ListItem>
-          <ListItemText primary={`Area: ${area.toFixed(2)} m²`} />
+          <Box sx={{ fontStyle: "italic", color: "grey.700" }}>
+            <ListItemText primary={`Area: ${area.toFixed(2)} m²`} />
+          </Box>
         </ListItem>
         <Divider />
       </List>

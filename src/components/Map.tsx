@@ -10,7 +10,12 @@ export default function Map() {
 
   return (
     <>
-      <MapContainer center={[0.1276, 51.5072]} zoom={14}>
+      <MapContainer
+        center={[0.1276, 51.5072]}
+        zoom={14}
+        scrollWheelZoom={false}
+        doubleClickZoom={false}
+      >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
