@@ -1,12 +1,18 @@
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { isSelected, useMapActions, useSolutionMap } from "../stores/mapStore";
+import {
+  isSelected,
+  useMapActions,
+  useMode,
+  useSolutionMap,
+} from "../stores/mapStore";
 import { useEffect, useRef } from "react";
 import { FeatureCollection } from "geojson";
 
 export default function Map() {
   const solutionMap = useSolutionMap();
+  const mode = useMode();
 
   return (
     <>
@@ -18,7 +24,7 @@ export default function Map() {
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+          url={`https://{s}.basemaps.cartocdn.com/${mode}_all/{z}/{x}/{y}{r}.png`}
         />
         {solutionMap && <MapFeatures geoJson={solutionMap.collection} />}
       </MapContainer>

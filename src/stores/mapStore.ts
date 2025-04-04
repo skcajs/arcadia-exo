@@ -21,6 +21,7 @@ const defaultMap: SolutionMap = {
 };
 
 interface MapActions {
+  setMode: (mode: string) => void;
   setCurrentSolutionMap: (
     selectedSolutionMap: string,
     solutionMapPath: string
@@ -31,15 +32,18 @@ interface MapActions {
 }
 
 interface MapStore {
+  mode: string;
   selectedSolutionMap: string;
   solutionMaps: Map<string, SolutionMap>;
   actions: MapActions;
 }
 
 const useMapStore = create<MapStore>()((set, get) => ({
+  mode: "light",
   selectedSolutionMap: "default",
   solutionMaps: new Map().set("default", defaultMap),
   actions: {
+    setMode: (mode: string) => set({ mode }),
     setCurrentSolutionMap: async (
       selectedSolutionMap: string,
       solutionMapPath: string
@@ -174,6 +178,8 @@ const useMapStore = create<MapStore>()((set, get) => ({
     },
   },
 }));
+
+export const useMode = () => useMapStore((state) => state.mode);
 
 export const useSolutionMap = () =>
   useMapStore((state) => state.solutionMaps.get(state.selectedSolutionMap));
