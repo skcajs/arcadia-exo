@@ -48,6 +48,8 @@ There are multiple assumptions made:
 
 7. Data is stored locally in the public folder, under `stubbs`.
 
+8. The application is designed for a monitor and many not work on a phone or tablet.
+
 ## Things for the future
 
 1. Testing: Implement unit and integration tests using frameworks like **Jest** or **React Testing Library** to ensure component reliability and catch regressions early.
