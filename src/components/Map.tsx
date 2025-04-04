@@ -1,7 +1,7 @@
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { useMapActions, useSolutionMap } from "../stores/mapStore";
+import { isSelected, useMapActions, useSolutionMap } from "../stores/mapStore";
 import { useEffect, useRef } from "react";
 import { FeatureCollection } from "geojson";
 
@@ -10,12 +10,12 @@ export default function Map() {
 
   return (
     <>
-      <MapContainer center={[0, 0]} zoom={14}>
+      <MapContainer center={[0.1276, 51.5072]} zoom={14}>
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <MapFeatures geoJson={solutionMap.collection} />
+        {solutionMap && <MapFeatures geoJson={solutionMap.collection} />}
       </MapContainer>
     </>
   );
@@ -35,6 +35,14 @@ const MapFeatures = ({ geoJson }: { geoJson: FeatureCollection }) => {
 
     const layer = L.geoJSON(geoJson, {
       onEachFeature: (feature, layer) => {
+        const selected = isSelected(feature);
+
+        if (layer instanceof L.Path) {
+          layer.setStyle({
+            color: selected ? "green" : "#3388ff",
+          });
+        }
+
         layer.on("click", () => {
           const isAdded = updateSelectedFeatures(feature);
 

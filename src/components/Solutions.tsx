@@ -16,7 +16,7 @@ export default function Solutions() {
   const [data, setData] = useState([]);
   const [selectedSolution, setSelectedSolution] = useState<string | null>(null);
 
-  const { setSolutionMap } = useMapActions();
+  const { setCurrentSolutionMap } = useMapActions();
 
   useEffect(() => {
     const fetchSolutions = async () => {
@@ -33,17 +33,7 @@ export default function Solutions() {
   }, []);
 
   const handleGeojson = async (solution: Solution) => {
-    const res = await fetch(`/data/geojson/${solution.fileName}`);
-    if (!res.ok) return;
-
-    const featureMap = await res.json();
-
-    setSolutionMap({
-      name: solution.solutionName,
-      selectedFeatures: [],
-      collection: featureMap,
-    });
-
+    setCurrentSolutionMap(solution.solutionName, solution.fileName);
     setSelectedSolution(solution.solutionName);
   };
 

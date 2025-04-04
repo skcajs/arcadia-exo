@@ -4,7 +4,6 @@ import { Feature, GeoJsonProperties, Polygon } from "geojson";
 import * as turf from "@turf/turf";
 
 const defaultMap: SolutionMap = {
-  name: "default",
   selectedFeatures: [],
   collection: {
     type: "FeatureCollection",
@@ -22,55 +21,93 @@ const defaultMap: SolutionMap = {
 };
 
 interface MapActions {
-  setSolutionMap: (solutionMap: SolutionMap) => void;
+  setCurrentSolutionMap: (
+    selectedSolutionMap: string,
+    solutionMapPath: string
+  ) => void;
   updateSelectedFeatures: (selectedFeature: Feature) => boolean;
   intersect: () => void;
   union: () => void;
 }
 
 interface MapStore {
-  solutionMap: SolutionMap;
+  selectedSolutionMap: string;
+  solutionMaps: Map<string, SolutionMap>;
   actions: MapActions;
 }
 
 const useMapStore = create<MapStore>()((set, get) => ({
-  solutionMap: defaultMap,
+  selectedSolutionMap: "default",
+  solutionMaps: new Map().set("default", defaultMap),
   actions: {
-    setSolutionMap: (solutionMap: SolutionMap) => set({ solutionMap }),
+    setCurrentSolutionMap: async (
+      selectedSolutionMap: string,
+      solutionMapPath: string
+    ) => {
+      if (!get().solutionMaps.get(selectedSolutionMap)) {
+        const res = await fetch(`/data/geojson/${solutionMapPath}`);
+        if (!res.ok) return;
+        const featureMap = await res.json();
+        get().solutionMaps.set(selectedSolutionMap, {
+          collection: featureMap,
+          selectedFeatures: [],
+        });
+      }
+      set({ selectedSolutionMap });
+    },
     updateSelectedFeatures: (selectedFeature: Feature): boolean => {
-      const { solutionMap } = get();
-      let isSelected = solutionMap.selectedFeatures.some(
-        (feature) => feature === selectedFeature
-      );
+      const { selectedSolutionMap } = get();
+      const { solutionMaps } = get();
+      const selectedMap = solutionMaps.get(selectedSolutionMap);
+      let isSelected =
+        selectedMap?.selectedFeatures.some(
+          (feature) => feature === selectedFeature
+        ) || false;
 
-      if (!isSelected && solutionMap.selectedFeatures.length >= 2) {
+      if (
+        selectedMap &&
+        !isSelected &&
+        selectedMap.selectedFeatures.length >= 2
+      ) {
         isSelected = !isSelected;
       } else {
         set({
-          solutionMap: {
-            ...solutionMap,
-            selectedFeatures: isSelected
-              ? solutionMap.selectedFeatures.filter(
-                  (feature) => feature !== selectedFeature
-                )
-              : [...solutionMap.selectedFeatures, selectedFeature],
-          },
+          solutionMaps: new Map(
+            Array.from(solutionMaps.entries()).map(
+              ([key, map]: [string, SolutionMap]) =>
+                key === selectedSolutionMap
+                  ? [
+                      key,
+                      {
+                        ...map,
+                        selectedFeatures: isSelected
+                          ? map.selectedFeatures.filter(
+                              (feature: Feature) => feature !== selectedFeature
+                            )
+                          : [...map.selectedFeatures, selectedFeature],
+                      },
+                    ]
+                  : [key, map]
+            )
+          ),
         });
       }
 
       return !isSelected;
     },
     intersect: () => {
-      const { solutionMap } = get();
-      if (solutionMap.selectedFeatures.length === 2) {
+      const { selectedSolutionMap } = get();
+      const { solutionMaps } = get();
+      const selectedMap = solutionMaps.get(selectedSolutionMap);
+      if (selectedMap && selectedMap.selectedFeatures.length === 2) {
         const coord1 =
-          solutionMap.selectedFeatures[0].geometry.type === "Polygon"
-            ? solutionMap.selectedFeatures[0].geometry.coordinates
+          selectedMap.selectedFeatures[0].geometry.type === "Polygon"
+            ? selectedMap.selectedFeatures[0].geometry.coordinates
             : null;
 
         const coord2 =
-          solutionMap.selectedFeatures[1].geometry.type === "Polygon"
-            ? solutionMap.selectedFeatures[1].geometry.coordinates
+          selectedMap.selectedFeatures[1].geometry.type === "Polygon"
+            ? selectedMap.selectedFeatures[1].geometry.coordinates
             : null;
 
         let poly1: Feature<Polygon, GeoJsonProperties> | null = coord1
@@ -91,13 +128,23 @@ const useMapStore = create<MapStore>()((set, get) => ({
 
         if (intersection) {
           set({
-            solutionMap: {
-              ...solutionMap,
-              selectedFeatures: [],
-              collection: turf.featureCollection(
-                intersection ? [intersection] : []
-              ),
-            },
+            solutionMaps: new Map(
+              Array.from(solutionMaps.entries()).map(
+                ([key, map]: [string, SolutionMap]) =>
+                  key === selectedSolutionMap
+                    ? [
+                        key,
+                        {
+                          ...map,
+                          selectedFeatures: [],
+                          collection: turf.featureCollection(
+                            intersection ? [intersection] : []
+                          ),
+                        },
+                      ]
+                    : [key, map]
+              )
+            ),
           });
         }
 
@@ -118,16 +165,18 @@ const useMapStore = create<MapStore>()((set, get) => ({
       }
     },
     union: () => {
-      const { solutionMap } = get();
-      if (solutionMap.selectedFeatures.length === 2) {
+      const { selectedSolutionMap } = get();
+      const { solutionMaps } = get();
+      const selectedMap = solutionMaps.get(selectedSolutionMap);
+      if (selectedMap && selectedMap.selectedFeatures.length === 2) {
         const coord1 =
-          solutionMap.selectedFeatures[0].geometry.type === "Polygon"
-            ? solutionMap.selectedFeatures[0].geometry.coordinates
+          selectedMap.selectedFeatures[0].geometry.type === "Polygon"
+            ? selectedMap.selectedFeatures[0].geometry.coordinates
             : null;
 
         const coord2 =
-          solutionMap.selectedFeatures[1].geometry.type === "Polygon"
-            ? solutionMap.selectedFeatures[1].geometry.coordinates
+          selectedMap.selectedFeatures[1].geometry.type === "Polygon"
+            ? selectedMap.selectedFeatures[1].geometry.coordinates
             : null;
 
         let poly1: Feature<Polygon, GeoJsonProperties> | null = coord1
@@ -148,11 +197,23 @@ const useMapStore = create<MapStore>()((set, get) => ({
 
         if (union) {
           set({
-            solutionMap: {
-              ...solutionMap,
-              selectedFeatures: [],
-              collection: turf.featureCollection(union ? [union] : []),
-            },
+            solutionMaps: new Map(
+              Array.from(solutionMaps.entries()).map(
+                ([key, map]: [string, SolutionMap]) =>
+                  key === selectedSolutionMap
+                    ? [
+                        key,
+                        {
+                          ...map,
+                          selectedFeatures: [],
+                          collection: turf.featureCollection(
+                            union ? [union] : []
+                          ),
+                        },
+                      ]
+                    : [key, map]
+              )
+            ),
           });
         }
       }
@@ -160,14 +221,24 @@ const useMapStore = create<MapStore>()((set, get) => ({
   },
 }));
 
-export const useSolutionMap = () => useMapStore((state) => state.solutionMap);
+export const useSolutionMap = () =>
+  useMapStore((state) => state.solutionMaps.get(state.selectedSolutionMap));
 
 export const useMapActions = () => useMapStore((state) => state.actions);
 
 export const useArea = () =>
   useMapStore((state) =>
-    state.solutionMap.selectedFeatures.reduce(
-      (sum, feature) => sum + turf.area(feature),
-      0
-    )
+    (
+      state.solutionMaps.get(state.selectedSolutionMap)?.selectedFeatures ?? []
+    ).reduce((sum, feature) => sum + turf.area(feature), 0)
   );
+
+export const isSelected = (selectedFeature: Feature): boolean => {
+  const { selectedSolutionMap, solutionMaps } = useMapStore.getState();
+  const selectedMap = solutionMaps.get(selectedSolutionMap);
+  return (
+    selectedMap?.selectedFeatures.some(
+      (feature) => feature === selectedFeature
+    ) || false
+  );
+};
