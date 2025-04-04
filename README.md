@@ -38,8 +38,24 @@ There are multiple assumptions made:
 
 2. There is currently no way to revert to the original `FeatureCollection` without refreshing the page. A future improvement could introduce history/undo functionality.
 
-3. The app assumes that all input GeoJSON files are valid `FeatureCollection` objects containing polygon geometries. No validation is performed at runtime.
+3. The zoom controls are disabled. This is to stop the user accidentally zooming in whilst trying to select or deselect a polygon. Otherwise, the basic features of the mapbox are available.
 
-4. All changes are stored in memory for the current session. Data is not persisted to disk, browser storage, or a backend. Reloading the page will reset all changes.
+4. The app assumes that all input GeoJSON files are valid `FeatureCollection` objects containing polygon geometries. No validation is performed at runtime.
 
-5. Switching between solutions does not flush changes, and each solution is stored separately.
+5. All changes are stored in memory for the current session. Data is not persisted to disk, browser storage, or a backend. Reloading the page will reset all changes.
+
+6. Switching between solutions does not flush changes, and each solution is stored separately.
+
+7. Data is stored locally in the public folder, under `stubbs`.
+
+## Things for the future
+
+1. Testing: Implement unit and integration tests using frameworks like **Jest** or **React Testing Library** to ensure component reliability and catch regressions early.
+
+2. Add undo/ redo functionality: This should be triviol as adding multiple states for each solution in the store, and keeping track of the current state in time.
+
+3. Validation.
+
+4. More feature rich. Add the possiblity to add new solutions in the ui (with a modal for example), and more tools, and ways to interact with the map.
+
+5. Accessibility: Add tooltips, keyboard navigation and visual feedback settings.
