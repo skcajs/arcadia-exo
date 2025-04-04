@@ -1,54 +1,45 @@
-# React + TypeScript + Vite
+# Assignment for Autodesk Forma
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The task was to make a simple web application where the user can interact with a set of polygons on a map.
 
-Currently, two official plugins are available:
+![alt text](<Screenshot from 2025-04-04 12-05-19.png>)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+The application supports several features, including:
 
-## Expanding the ESLint configuration
+- Selecting from multiple solutions via the left-hand panel.
+- Interacting with polygons from the loaded FeatureCollection.
+- Performing boolean operations (union and intersect) on two selected polygons.
+- When an operation is executed, the result replaces the selected polygons in the current FeatureCollection.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Project Setup
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+The application is built with React and TypeScript, and uses several external libraries to support development:
+
+- Leaflet.js for rendering the map and displaying polygons.
+
+- Turf.js for performing geometric operations like intersection and union.
+
+- Zustand for state management, with useState used for local component state where appropriate.
+
+The global store is modular, relying on hooks to expose only the necessary actions and state.
+
+### To run the application locally:
+
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Assumptions (and excuses)
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+There are multiple assumptions made:
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+1. Since the tools can only work with 2 polygons, at most, only 2 polygons can be selected. In the code, I have limited the selection to 2, if the user selects a third, it will not be selected until the user deselects another polygon.
+
+2. When using the tool, currently, there is no option to go back to the original featurecollection without resetting the page. In a later version, there could be a history setting.
+
+3. The application assumes valid GeoJSON, there is currently no validation on the GeoJSON object.
+
+4. Persisting any changes are all done in memory. Normally, you can persist them to a database/ the cloud, a disk, or the users browser session (e.g, as a cookie or local session). Resetting the browser will flush any changes.
+
+5. Switching between solutions does not flush changes, and each solution is stored separately.
