@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { getStateLength, useMapActions, useVersion } from "../stores/mapStore";
-import { Redo, Undo } from "@mui/icons-material";
+import { ArrowBack, ArrowForward } from "@mui/icons-material";
 
 export default function Tools() {
   const { intersect, union, undo, redo } = useMapActions();
@@ -52,7 +52,7 @@ export default function Tools() {
               size="large"
               onClick={() => undo()}
             >
-              <Undo fontSize="inherit" />
+              <ArrowBack fontSize="inherit" />
             </IconButton>
             <div className="spacer" />
             <IconButton
@@ -61,7 +61,7 @@ export default function Tools() {
               size="large"
               onClick={() => redo()}
             >
-              <Redo fontSize="inherit" />
+              <ArrowForward fontSize="inherit" />
             </IconButton>
           </Box>
         </ListItem>
