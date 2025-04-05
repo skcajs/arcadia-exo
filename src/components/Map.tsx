@@ -3,6 +3,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import {
   isSelected,
+  useHistoryCounter,
   useMapActions,
   useMode,
   useSolutionMap,
@@ -26,7 +27,11 @@ export default function Map() {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url={`https://{s}.basemaps.cartocdn.com/${mode}_all/{z}/{x}/{y}{r}.png`}
         />
-        {solutionMap && <MapFeatures geoJson={solutionMap.collection} />}
+        {solutionMap && (
+          <MapFeatures
+            geoJson={solutionMap.states[solutionMap.version].collection}
+          />
+        )}
       </MapContainer>
     </>
   );
@@ -34,6 +39,7 @@ export default function Map() {
 
 const MapFeatures = ({ geoJson }: { geoJson: FeatureCollection }) => {
   const { updateSelectedFeatures, maxFeatures } = useMapActions();
+  const historyCounter = useHistoryCounter();
   const map = useMap();
   const geoJsonLayerRef = useRef<L.Layer | null>(null);
 
@@ -85,7 +91,7 @@ const MapFeatures = ({ geoJson }: { geoJson: FeatureCollection }) => {
 
     map.addLayer(layer);
     map.setView(bounds.getCenter(), 15);
-  }, [updateSelectedFeatures, maxFeatures, geoJson, map]);
+  }, [updateSelectedFeatures, maxFeatures, geoJson, map, historyCounter]);
 
   return null;
 };

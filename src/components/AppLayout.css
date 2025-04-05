@@ -11,3 +11,8 @@
   font-style: "italic";
   color: "grey.700";
 }
+
+.spacer {
+  padding-left: 32px;
+  padding-right: 32px;
+}
