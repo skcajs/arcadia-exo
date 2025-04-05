@@ -7,10 +7,12 @@ import {
   Divider,
   ListItemButton,
   ListItemText,
+  IconButton,
 } from "@mui/material";
 
 import { Solution } from "../types/Solution";
 import { useMapActions } from "../stores/mapStore";
+import { Add } from "@mui/icons-material";
 
 export default function Solutions() {
   const [data, setData] = useState([]);
@@ -57,6 +59,20 @@ export default function Solutions() {
             <Divider />
           </React.Fragment>
         ))}
+        <ListItem>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
+            }}
+          >
+            <IconButton aria-label="add" size="large">
+              <Add fontSize="inherit" />
+            </IconButton>
+          </Box>
+        </ListItem>
       </List>
     </Box>
   );

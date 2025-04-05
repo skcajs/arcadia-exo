@@ -46,23 +46,29 @@ const MapFeatures = ({ geoJson }: { geoJson: FeatureCollection }) => {
 
     const layer = L.geoJSON(geoJson, {
       onEachFeature: (feature, layer) => {
-        const selected = isSelected(feature);
-
         if (layer instanceof L.Path) {
           layer.setStyle({
-            color: selected ? "green" : "#3388ff",
+            color: isSelected(feature) ? "#008000" : "#3388ff",
+          });
+
+          layer.on("click", () => {
+            layer.setStyle({
+              color: updateSelectedFeatures(feature) ? "#008000" : "#3388ff",
+            });
+          });
+
+          layer.on("mouseover", () => {
+            layer.setStyle({
+              color: isSelected(feature) ? "#3388ff" : "#008000",
+            });
+          });
+
+          layer.on("mouseout", () => {
+            layer.setStyle({
+              color: isSelected(feature) ? "#008000" : "#3388ff",
+            });
           });
         }
-
-        layer.on("click", () => {
-          const isAdded = updateSelectedFeatures(feature);
-
-          if (layer instanceof L.Path) {
-            layer.setStyle({
-              color: isAdded ? "green" : "#3388ff",
-            });
-          }
-        });
       },
     });
 
