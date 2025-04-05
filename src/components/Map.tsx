@@ -33,7 +33,7 @@ export default function Map() {
 }
 
 const MapFeatures = ({ geoJson }: { geoJson: FeatureCollection }) => {
-  const { updateSelectedFeatures } = useMapActions();
+  const { updateSelectedFeatures, maxFeatures } = useMapActions();
   const map = useMap();
   const geoJsonLayerRef = useRef<L.Layer | null>(null);
 
@@ -53,13 +53,21 @@ const MapFeatures = ({ geoJson }: { geoJson: FeatureCollection }) => {
 
           layer.on("click", () => {
             layer.setStyle({
-              color: updateSelectedFeatures(feature) ? "#008000" : "#3388ff",
+              color: updateSelectedFeatures(feature)
+                ? "#008000"
+                : maxFeatures()
+                ? "#808080"
+                : "#3388ff",
             });
           });
 
           layer.on("mouseover", () => {
             layer.setStyle({
-              color: isSelected(feature) ? "#3388ff" : "#008000",
+              color: isSelected(feature)
+                ? "#3388ff"
+                : maxFeatures()
+                ? "#808080"
+                : "#008000",
             });
           });
 
@@ -77,7 +85,7 @@ const MapFeatures = ({ geoJson }: { geoJson: FeatureCollection }) => {
 
     map.addLayer(layer);
     map.setView(bounds.getCenter(), 15);
-  }, [updateSelectedFeatures, geoJson, map]);
+  }, [updateSelectedFeatures, maxFeatures, geoJson, map]);
 
   return null;
 };

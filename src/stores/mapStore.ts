@@ -27,6 +27,7 @@ interface MapActions {
     solutionMapPath: string
   ) => void;
   updateSelectedFeatures: (selectedFeature: Feature) => boolean;
+  maxFeatures: () => boolean;
   intersect: () => void;
   union: () => void;
 }
@@ -105,6 +106,13 @@ const useMapStore = create<MapStore>()((set, get) => ({
       }
 
       return !isSelected;
+    },
+    maxFeatures: (): boolean => {
+      const { selectedSolutionMap } = get();
+      const { solutionMaps } = get();
+      return (
+        solutionMaps.get(selectedSolutionMap)?.selectedFeatures.length === 2
+      );
     },
     intersect: () => {
       const { selectedSolutionMap } = get();
