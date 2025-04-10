@@ -12,4 +12,25 @@ export const theme = createTheme({
       default: "#ebebf0",
     },
   },
+  // components: {
+  //   MuiPaper: {
+  //     styleOverrides: {
+  //       root: {
+  //         backgroundColor: "#505050",
+  //         color: "#FFFFFF",
+  //       },
+  //     },
+  //   },
+  //   MuiSvgIcon: {
+  //     styleOverrides: {
+  //       root: {
+  //         backgroundColor: "#505050",
+  //         color: "#FFFFFF",
+  //       },
+  //       colorDisabled: {
+  //         color: "#505050",
+  //       },
+  // },
+  // },
+  // },
 });

@@ -27,7 +27,7 @@ export default function AppLayout() {
       >
         <Toolbar className="toolbar">
           <Typography>
-            <img src="./autodesk-forma.png" style={{ height: 24 }} />
+            <img src="./logo.png" style={{ height: 36 }} />
           </Typography>
         </Toolbar>
       </AppBar>
