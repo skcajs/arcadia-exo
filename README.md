@@ -1,6 +1,6 @@
-# Assignment for Autodesk Forma
-
+# Assignment for an interview
 The task was to make a simple web application where the user can interact with a set of polygons on a map.
+I didn't land the job :(, but I did create this awesome shiny application which I am really happy about. 
 
 ![alt text](output.png)
 
