@@ -58,14 +58,21 @@ const useMapStore = create<MapStore>()((set, get) => ({
       selectedSolutionMap: string,
       solutionMapPath: string
     ) => {
-      if (!get().solutionMaps.get(selectedSolutionMap)) {
-        const res = await fetch(`/data/geojson/${solutionMapPath}`);
-        if (!res.ok) return;
-        const featureMap = await res.json();
-        get().solutionMaps.set(selectedSolutionMap, {
-          states: [{ collection: featureMap, selectedFeatures: [] }],
-          version: 0,
-        });
+      try {
+        if (!get().solutionMaps.get(selectedSolutionMap)) {
+          const res = await fetch(`/data/geojson/${solutionMapPath}`);
+          if (!res.ok) {
+            console.error(`Failed to fetch solution map: ${res.statusText}`);
+            return;
+          }
+          const featureMap = await res.json();
+          get().solutionMaps.set(selectedSolutionMap, {
+            states: [{ collection: featureMap, selectedFeatures: [] }],
+            version: 0,
+          });
+        }
+      } catch (error) {
+        console.error("An error occurred while setting the solution map:", error);
       }
       set({ selectedSolutionMap });
     },
@@ -77,7 +84,7 @@ const useMapStore = create<MapStore>()((set, get) => ({
         selectedMap?.states[selectedMap.version].selectedFeatures.some(
           (featureIndex) =>
             selectedMap.states[selectedMap.version].collection.features[
-              featureIndex
+            featureIndex
             ] === selectedFeature
         ) || false;
 
@@ -101,28 +108,28 @@ const useMapStore = create<MapStore>()((set, get) => ({
                 ([key, map]: [string, SolutionMap]) =>
                   key === selectedSolutionMap
                     ? [
-                        key,
-                        {
-                          ...map,
-                          states: [
-                            ...map.states.slice(0, map.version + 1),
-                            {
-                              ...map.states[map.version],
-                              selectedFeatures: isSelected
-                                ? map.states[
-                                    map.version
-                                  ].selectedFeatures.filter(
-                                    (index: number) => index !== featureIndex
-                                  )
-                                : [
-                                    ...map.states[map.version].selectedFeatures,
-                                    featureIndex,
-                                  ],
-                            },
-                          ],
-                          version: map.version + 1,
-                        },
-                      ]
+                      key,
+                      {
+                        ...map,
+                        states: [
+                          ...map.states.slice(0, map.version + 1),
+                          {
+                            ...map.states[map.version],
+                            selectedFeatures: isSelected
+                              ? map.states[
+                                map.version
+                              ].selectedFeatures.filter(
+                                (index: number) => index !== featureIndex
+                              )
+                              : [
+                                ...map.states[map.version].selectedFeatures,
+                                featureIndex,
+                              ],
+                          },
+                        ],
+                        version: map.version + 1,
+                      },
+                    ]
                     : [key, map]
               )
             ),
@@ -151,10 +158,10 @@ const useMapStore = create<MapStore>()((set, get) => ({
         const intersect = turf.intersect(
           turf.featureCollection([
             selectedMap.states[selectedMap.version].collection.features[
-              selectedMap.states[selectedMap.version].selectedFeatures[0]
+            selectedMap.states[selectedMap.version].selectedFeatures[0]
             ],
             selectedMap.states[selectedMap.version].collection.features[
-              selectedMap.states[selectedMap.version].selectedFeatures[1]
+            selectedMap.states[selectedMap.version].selectedFeatures[1]
             ],
           ])
         );
@@ -166,21 +173,21 @@ const useMapStore = create<MapStore>()((set, get) => ({
                 ([key, map]: [string, SolutionMap]) =>
                   key === selectedSolutionMap
                     ? [
-                        key,
-                        {
-                          ...map,
-                          states: [
-                            ...map.states.slice(0, map.version + 1),
-                            {
-                              selectedFeatures: [],
-                              collection: turf.featureCollection(
-                                intersect ? [intersect] : []
-                              ),
-                            },
-                          ],
-                          version: map.version + 1,
-                        },
-                      ]
+                      key,
+                      {
+                        ...map,
+                        states: [
+                          ...map.states.slice(0, map.version + 1),
+                          {
+                            selectedFeatures: [],
+                            collection: turf.featureCollection(
+                              intersect ? [intersect] : []
+                            ),
+                          },
+                        ],
+                        version: map.version + 1,
+                      },
+                    ]
                     : [key, map]
               )
             ),
@@ -199,10 +206,10 @@ const useMapStore = create<MapStore>()((set, get) => ({
         const union = turf.union(
           turf.featureCollection([
             selectedMap.states[selectedMap.version].collection.features[
-              selectedMap.states[selectedMap.version].selectedFeatures[0]
+            selectedMap.states[selectedMap.version].selectedFeatures[0]
             ],
             selectedMap.states[selectedMap.version].collection.features[
-              selectedMap.states[selectedMap.version].selectedFeatures[1]
+            selectedMap.states[selectedMap.version].selectedFeatures[1]
             ],
           ])
         );
@@ -214,21 +221,21 @@ const useMapStore = create<MapStore>()((set, get) => ({
                 ([key, map]: [string, SolutionMap]) =>
                   key === selectedSolutionMap
                     ? [
-                        key,
-                        {
-                          ...map,
-                          states: [
-                            ...map.states.slice(0, map.version + 1),
-                            {
-                              selectedFeatures: [],
-                              collection: turf.featureCollection(
-                                union ? [union] : []
-                              ),
-                            },
-                          ],
-                          version: map.version + 1,
-                        },
-                      ]
+                      key,
+                      {
+                        ...map,
+                        states: [
+                          ...map.states.slice(0, map.version + 1),
+                          {
+                            selectedFeatures: [],
+                            collection: turf.featureCollection(
+                              union ? [union] : []
+                            ),
+                          },
+                        ],
+                        version: map.version + 1,
+                      },
+                    ]
                     : [key, map]
               )
             ),
@@ -249,12 +256,12 @@ const useMapStore = create<MapStore>()((set, get) => ({
               ([key, map]: [string, SolutionMap]) =>
                 key === selectedSolutionMap
                   ? [
-                      key,
-                      {
-                        ...map,
-                        version: map.version - 1,
-                      },
-                    ]
+                    key,
+                    {
+                      ...map,
+                      version: map.version - 1,
+                    },
+                  ]
                   : [key, map]
             )
           ),
@@ -276,12 +283,12 @@ const useMapStore = create<MapStore>()((set, get) => ({
               ([key, map]: [string, SolutionMap]) =>
                 key === selectedSolutionMap
                   ? [
-                      key,
-                      {
-                        ...map,
-                        version: map.version + 1,
-                      },
-                    ]
+                    key,
+                    {
+                      ...map,
+                      version: map.version + 1,
+                    },
+                  ]
                   : [key, map]
             )
           ),
@@ -310,10 +317,10 @@ export const useArea = () =>
             featureIndex
           ]?.geometry.type === "Polygon"
             ? turf.area(
-                selectedMap.states[selectedMap.version].collection.features[
-                  featureIndex
-                ] as Feature<Polygon, GeoJsonProperties>
-              )
+              selectedMap.states[selectedMap.version].collection.features[
+              featureIndex
+              ] as Feature<Polygon, GeoJsonProperties>
+            )
             : 0),
         0
       ) ?? 0
@@ -337,7 +344,7 @@ export const isSelected = (selectedFeature: Feature): boolean => {
     selectedMap?.states[selectedMap.version].selectedFeatures.some(
       (featureIndex) =>
         selectedMap.states[selectedMap.version].collection.features[
-          featureIndex
+        featureIndex
         ] === selectedFeature
     ) || false
   );
